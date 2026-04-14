@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel | Anirban Club</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <style>
+        /* সম্পূর্ণ বডিতে 4K স্টেডিয়াম ব্যাকগ্রাউন্ড */
+        body { 
+            margin: 0; font-family: Arial; 
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                        url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000'); 
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: #fff; padding: 20px; text-align: center; 
+        }
+        
+        .login-box { max-width: 300px; margin: 100px auto; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.3); color: #333; }
+        .admin-container { display: none; max-width: 700px; margin: auto; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px; color: #333; }
+        section { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: left; background: #fff; }
+        h1, h2 { color: #28a745; margin-top: 0; }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #218838; }
+        .item { display: flex; justify-content: space-between; background: #f4f4f4; padding: 8px; margin: 5px 0; border-radius: 4px; border-bottom: 1px solid #ddd; }
+        .del-btn { background: #ff4444; width: auto; padding: 5px 10px; font-size: 12px; margin: 0; }
+    </style>
+</head>
+<body>
+    <div id="login-area" class="login-box">
+        <h3>অ্যাডমিন লগইন</h3>
+        <input type="password" id="passInput" placeholder="পাসওয়ার্ড দিন">
+        <button onclick="checkPass()">Login</button>
+    </div>
+
+    <div id="admin-area" class="admin-container">
+        <h1>Admin Control</h1>
+        <section>
+            <h2>ম্যাচ যোগ</h2>
+            <input type="text" id="opp" placeholder="Opponent Name">
+            <input type="text" id="mDate" placeholder="Date (e.g. 25 OCT)">
+            <input type="text" id="mTime" placeholder="Time">
+            <button onclick="addMatch()">Save Match</button>
+            <div id="mList"></div>
+        </section>
+
+        <section>
+            <h2>প্লেয়ার যোগ (Direct File)</h2>
+            <input type="text" id="pName" placeholder="Name">
+            <input type="number" id="pNo" placeholder="Jersey No">
+            <input type="text" id="pPos" placeholder="Position">
+            <input type="file" id="pFile" accept="image/*">
+            <button onclick="handleUpload('player')">Upload & Save Player</button>
+            <div id="pList"></div>
+        </section>
+
+        <section>
+            <h2>গ্যালারি ফটো (Direct File)</h2>
+            <input type="file" id="gFile" accept="image/*">
+            <button onclick="handleUpload('gallery')">Upload to Gallery</button>
+            <div id="gList"></div>
+        </section>
+        <button style="background:#666" onclick="location.reload()">Logout</button>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_qcXBjhL5f4LQ7WVeSWHePpEzgEQpHPQ",
+            authDomain: "anirban-club-8277f.firebaseapp.com",
+            databaseURL: "https://anirban-club-8277f-default-rtdb.firebaseio.com",
+            projectId: "anirban-club-8277f",
+            storageBucket: "anirban-club-8277f.firebasestorage.app",
+            messagingSenderId: "844771629661",
+            appId: "1:844771629661:web:84b955dd93724060b4cbb4"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const IMGBB_API_KEY = "4ad9d961f375024f1fd822517fac145e";
+
+        function checkPass() {
+            if(document.getElementById('passInput').value === "1234") {
+                document.getElementById('login-area').style.display = 'none';
+                document.getElementById('admin-area').style.display = 'block';
+            } else { alert("ভুল পাসওয়ার্ড!"); }
+        }
+
+        async function handleUpload(type) {
+            const fileInput = type === 'player' ? document.getElementById('pFile') : document.getElementById('gFile');
+            const file = fileInput.files[0];
+            if(!file) return alert("ছবি সিলেক্ট করুন!");
+
+            let formData = new FormData();
+            formData.append("image", file);
+            
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+            const data = await res.json();
+            const url = data.data.url;
+
+            if(type === 'player') {
+                const name = document.getElementById('pName').value;
+                const number = document.getElementById('pNo').value;
+                const position = document.getElementById('pPos').value;
+                db.ref('players').push({ name, number, position, photo: url });
+            } else {
+                db.ref('gallery').push({ url });
+            }
+            alert("সফলভাবে আপলোড হয়েছে!");
+        }
+
+        function addMatch() {
+            const opponent = document.getElementById('opp').value;
+            const date = document.getElementById('mDate').value;
+            const time = document.getElementById('mTime').value;
+            db.ref('matchData').push({ opponent, date, time });
+            alert("ম্যাচ সেভ হয়েছে!");
+        }
+
+        function render(path, el) {
+            db.ref(path).on('value', s => {
+                document.getElementById(el).innerHTML = "";
+                s.forEach(c => {
+                    const txt = c.val().name || c.val().opponent || "Photo";
+                    document.getElementById(el).innerHTML += `<div class="item">${txt} <button class="del-btn" onclick="db.ref('${path}').child('${c.key}').remove()">Delete</button></div>`;
+                });
+            });
+        }
+        render('matchData', 'mList'); render('players', 'pList'); render('gallery', 'gList');
+    </script>
+</body>
+</html>
