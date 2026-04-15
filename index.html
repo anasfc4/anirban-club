@@ -4,24 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anirban Club | অনির্বাণ ক্লাব</title>
+    
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg">
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
     <style>
-        :root { --primary: #28a745; --accent: #ffc107; }
+        :root { --primary: #28a745; --accent: #ffc107; --card-bg: #ffffff; }
         
         body { 
-            margin: 0; font-family: 'Segoe UI', Arial; 
-            /* উজ্জ্বল ব্যাকগ্রাউন্ড ইমেজ */
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+            margin: 0; font-family: 'Segoe UI', Arial, sans-serif; 
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
                         url('https://scontent.fzyl2-2.fna.fbcdn.net/v/t39.30808-6/607974594_852646121082276_7130834902483691793_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=2a1932&_nc_ohc=17Jq5TocuxsQ7kNvwHD-mK1&_nc_oc=AdooyDPTLZTkTmHb3lBAC-incw6zw9Fl5fpO7AmYZ9alvnOsQKpvH0WkmckQfNvqXXg&_nc_zt=23&_nc_ht=scontent.fzyl2-2.fna&_nc_gid=CNcK1J-r-dZVv5Gmitg5cw&_nc_ss=7a3a8&oh=00_Af1BI8Tl3kr-QUlEHicoDzOai3IOVf0K4X60YcpMnxArvA&oe=69E3B475'); 
             background-size: cover; background-position: center; background-attachment: fixed;
             color: #fff; text-align: center; overflow-x: hidden; 
         }
         
-        .header { padding: 60px 20px; border-bottom: 3px solid var(--primary); background: rgba(0,0,0,0.2); }
-        .header h1 { margin: 0; letter-spacing: 4px; font-size: 2.5rem; text-shadow: 2px 2px 15px rgba(0,0,0,1); }
+        /* লোগো ও নাম পাশাপাশি রাখার জন্য আপডেট করা হেডার */
+        .header { 
+            padding: 40px 20px; 
+            border-bottom: 3px solid var(--primary); 
+            background: rgba(0,0,0,0.5); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 20px; 
+        }
+        .main-logo { 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 50%; 
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+        }
+        .header h1 { 
+            margin: 0; 
+            letter-spacing: 2px; 
+            font-size: 2.2rem; 
+            text-shadow: 2px 2px 10px rgba(0,0,0,1); 
+            text-transform: uppercase;
+        }
 
-        .menu-grid { display: flex; justify-content: center; gap: 8px; padding: 20px 10px; flex-wrap: wrap; background: rgba(0,0,0,0.6); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
+        .menu-grid { display: flex; justify-content: center; gap: 8px; padding: 20px 10px; flex-wrap: wrap; background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
         .menu-btn { 
             background: transparent; border: 2px solid var(--primary); color: #fff; 
             padding: 10px 15px; border-radius: 8px; cursor: pointer; 
@@ -32,50 +57,52 @@
         .content-section { display: none; padding: 40px 15px; min-height: 500px; }
         .content-section.active { display: block; animation: slideUp 0.4s ease-out; }
 
-        /* ম্যাচ কার্ড ডিজাইন */
-        .match-card-wrapper { margin-bottom: 25px; }
-        .match-card {
-            background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%);
-            margin: 0 auto; width: 100%; max-width: 550px;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 15px; border-radius: 10px 10px 0 0;
-        }
-        .team { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .team img { width: 45px; height: 45px; object-fit: contain; }
-        .team span { font-size: 15px; font-weight: 900; color: #fff; text-transform: uppercase; }
-        .vs-box { background: #fff; color: #ff5722; font-weight: 900; padding: 5px 12px; border-radius: 5px; }
-        .match-meta {
-            background: rgba(20, 20, 20, 0.9); padding: 10px; font-size: 13px;
-            width: 100%; max-width: 550px; margin: 0 auto; border-radius: 0 0 10px 10px; border-bottom: 3px solid var(--accent);
-        }
-
-        /* প্লেয়ার কার্ড উইথ গোল লোগো ওয়াটারমার্ক */
-        .player-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        /* প্লেয়ার কার্ড (Zidane Style) */
+        .player-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
         .card { 
-            background: #000; width: 230px; border: 3px solid var(--primary); 
-            border-radius: 15px; overflow: hidden; position: relative; 
+            background: var(--card-bg); width: 280px; height: 440px; 
+            border-radius: 12px; position: relative; overflow: hidden; 
+            color: #111; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid #ddd;
+            text-align: left;
         }
-        .card::after {
-            content: "";
-            background: url('https://i.ibb.co.com/B5mdnXJK/1000019867.jpg'); 
-            background-size: 75%; background-repeat: no-repeat; background-position: center 30%;
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 50%; opacity: 0.18; pointer-events: none; z-index: 0;
-        }
-        .card img { width: 100%; height: 280px; object-fit: cover; position: relative; z-index: 1; opacity: 0.9; }
-        .card-info { background: var(--primary); color: #000; padding: 10px; text-align: left; position: relative; z-index: 1; }
-        .card-info h3 { margin: 0; font-size: 18px; font-weight: 900; }
-        .card-no { position: absolute; right: 10px; top: 5px; font-size: 1.8rem; font-weight: 900; opacity: 0.2; }
+        .player-img-container { position: absolute; top: 0; left: 0; width: 100%; height: 75%; overflow: hidden; z-index: 2; }
+        .player-img-container img { width: 100%; height: 100%; object-fit: cover; mask-image: linear-gradient(to bottom, black 85%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
+        .card-bg-shape { position: absolute; bottom: 0; right: 0; width: 70%; height: 40%; background: #f9f9f9; clip-path: polygon(100% 0, 0% 100%, 100% 100%); z-index: 1; }
+        .card-info-main { position: absolute; bottom: 70px; left: 20px; right: 20px; z-index: 6; }
+        .p-name { font-size: 28px; font-weight: 900; text-transform: uppercase; line-height: 1; margin-bottom: 4px; color: #000; }
+        .p-position { font-size: 13px; font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+        .card-bottom-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 65px; background: #f4f4f4; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 6; }
+        .club-logo-mini { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #ddd; }
+        .p-number-box { width: 45px; height: 45px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; border: 2px solid #ccc; color: #000; }
 
-        .info-box { max-width: 800px; margin: auto; background: rgba(0,0,0,0.6); padding: 30px; border-radius: 15px; border: 1px solid var(--primary); text-align: left; line-height: 1.8; }
+        /* ম্যাচ কার্ড */
+        .match-card-wrapper { margin-bottom: 25px; }
+        .match-card { background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%); margin: 0 auto; width: 100%; max-width: 550px; display: flex; align-items: center; justify-content: space-between; padding: 15px; border-radius: 10px 10px 0 0; }
+        .team { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .team img { width: 40px; height: 40px; border-radius: 50%; }
+        .vs-box { background: #fff; color: #ff5722; font-weight: 900; padding: 5px 12px; border-radius: 5px; }
+        .match-meta { background: rgba(20, 20, 20, 0.9); padding: 10px; font-size: 13px; width: 100%; max-width: 550px; margin: 0 auto; border-radius: 0 0 10px 10px; border-bottom: 3px solid var(--accent); }
+
+        /* গ্যালারি ও ইনফো */
+        .info-box { max-width: 800px; margin: auto; background: rgba(0,0,0,0.7); padding: 30px; border-radius: 15px; border: 1px solid var(--primary); text-align: left; line-height: 1.8; }
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
         .gallery-grid img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid var(--primary); }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 600px) {
+            .header { gap: 10px; padding: 30px 10px; }
+            .main-logo { width: 55px; height: 55px; }
+            .header h1 { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="header"><h1>ANIRBAN CLUB</h1></div>
+    <div class="header">
+        <img src="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg" class="main-logo" alt="Logo">
+        <h1>ANIRBAN CLUB</h1>
+    </div>
+
     <div class="menu-grid">
         <button class="menu-btn active" onclick="showSection('match-sec', this)">MATCHES</button>
         <button class="menu-btn" onclick="showSection('squad-sec', this)">SQUAD</button>
@@ -112,7 +139,7 @@
             const div = document.getElementById('match-list'); div.innerHTML = '';
             s.forEach(c => {
                 const m = c.val();
-                div.innerHTML += `<div class="match-card-wrapper"><div class="match-card"><div class="team"><img src="logo.jpg"><span>ANIRBAN</span></div><div class="vs-box">VS</div><div class="team"><span>${m.opponent}</span><img src="https://cdn-icons-png.flaticon.com/512/53/53254.png"></div></div><div class="match-meta">${m.date} — ${m.time} — ANIRBAN ARENA</div></div>`;
+                div.innerHTML += `<div class="match-card-wrapper"><div class="match-card"><div class="team"><img src="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg"><span>ANIRBAN</span></div><div class="vs-box">VS</div><div class="team"><span>${m.opponent}</span><img src="https://cdn-icons-png.flaticon.com/512/53/53254.png"></div></div><div class="match-meta">${m.date} — ${m.time} — ANIRBAN ARENA</div></div>`;
             });
         });
 
@@ -120,7 +147,22 @@
             const div = document.getElementById('player-list'); div.innerHTML = '';
             s.forEach(c => {
                 const p = c.val();
-                div.innerHTML += `<div class="card"><img src="${p.photo}"><div class="card-info"><div class="card-no">#${p.number}</div><h3>${p.name}</h3><small>${p.position}</small></div></div>`;
+                div.innerHTML += `
+                    <div class="card">
+                        <div class="player-img-container"><img src="${p.photo}"></div>
+                        <div class="card-bg-shape"></div>
+                        <div class="card-info-main">
+                            <div class="p-name">${p.name}</div>
+                            <div class="p-position">${p.position}</div>
+                        </div>
+                        <div class="card-bottom-bar">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <img src="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg" class="club-logo-mini">
+                                <div style="font-size:10px; font-weight:900; color:#555;">ANIRBAN<br>CLUB</div>
+                            </div>
+                            <div class="p-number-box">${p.number}</div>
+                        </div>
+                    </div>`;
             });
         });
 
