@@ -36,6 +36,7 @@
             <input type="text" id="opp" placeholder="Opponent Name">
             <input type="text" id="mDate" placeholder="Date (25 OCT)">
             <input type="text" id="mTime" placeholder="Time (4:00 PM)">
+            <input type="text" id="edit" placeholder="edit">
             <button onclick="addMatch()">Save Match</button>
             <div id="mList"></div>
         </section>
@@ -80,7 +81,7 @@
         const IMGBB_API_KEY = "4ad9d961f375024f1fd822517fac145e";
 
         function checkPass() {
-            if(document.getElementById('passInput').value === "1234") {
+            if(document.getElementById('passInput').value === "anirban@123#") {
                 document.getElementById('login-area').style.display = 'none';
                 document.getElementById('admin-area').style.display = 'block';
             } else { alert("Wrong Password!"); }
