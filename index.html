@@ -6,174 +6,172 @@
     <title>Anirban Club | অনির্বাণ ক্লাব</title>
     
     <link rel="icon" type="image/x-icon" href="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg">
-
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
     <style>
-        :root { --primary: #28a745; --accent: #ffc107; --card-bg: #ffffff; }
+        :root { 
+            --primary: #28a745; 
+            --accent: #ffc107; 
+        }
         
         body { 
-            margin: 0; font-family: 'Segoe UI', Arial, sans-serif; 
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('https://i.ibb.co.com/ns5BsVxp/IMG-20251229-WA0003-1.jpg'); 
-            background-size: cover; background-position: center; background-attachment: fixed;
-            color: #fff; text-align: center; overflow-x: hidden; 
+            margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: url('https://i.ibb.co.com/ns5BsVxp/IMG-20251229-WA0003-1.jpg') no-repeat center center fixed; 
+            background-size: cover; 
+            image-rendering: -webkit-optimize-contrast; 
+            color: #fff;
         }
-        
-        /* লোগো ও নাম পাশাপাশি রাখার জন্য আপডেট করা হেডার */
+
+        .main-wrapper { background: rgba(0, 0, 0, 0.35); min-height: 100vh; width: 100%; }
+
         .header { 
-            padding: 40px 20px; 
-            border-bottom: 3px solid var(--primary); 
-            background: rgba(0,0,0,0.5); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 20px; 
+            padding: 40px 10px; background: rgba(0, 0, 0, 0.7);
+            border-bottom: 4px solid var(--primary); 
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        .main-logo { 
-            width: 80px; 
-            height: 80px; 
-            border-radius: 50%; 
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
-        }
-        .header h1 { 
-            margin: 0; 
-            letter-spacing: 2px; 
-            font-size: 2.2rem; 
-            text-shadow: 2px 2px 10px rgba(0,0,0,1); 
-            text-transform: uppercase;
-        }
+        .main-logo { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--primary); box-shadow: 0 0 15px var(--primary); }
+        .header h1 { margin: 0; font-size: 2.5rem; text-transform: uppercase; font-weight: 900; letter-spacing: 3px; }
 
-        .menu-grid { display: flex; justify-content: center; gap: 8px; padding: 20px 10px; flex-wrap: wrap; background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
+        .menu-bar { 
+            display: flex; justify-content: center; gap: 8px; padding: 15px; 
+            background: rgba(0,0,0,0.85); position: sticky; top: 0; z-index: 100;
+        }
         .menu-btn { 
-            background: transparent; border: 2px solid var(--primary); color: #fff; 
-            padding: 10px 15px; border-radius: 8px; cursor: pointer; 
-            font-weight: bold; flex: 1; max-width: 150px; transition: 0.3s; font-size: 13px;
+            background: none; border: 2px solid var(--primary); color: #fff; 
+            padding: 10px 15px; border-radius: 30px; cursor: pointer; 
+            font-weight: bold; flex: 1; max-width: 120px; font-size: 13px; transition: 0.3s;
         }
-        .menu-btn.active { background: var(--primary); color: #000; }
+        .menu-btn.active { background: var(--primary); color: #000; box-shadow: 0 0 10px var(--primary); }
 
-        .content-section { display: none; padding: 40px 15px; min-height: 500px; }
-        .content-section.active { display: block; animation: slideUp 0.4s ease-out; }
-
-        /* প্লেয়ার কার্ড (Zidane Style) */
-        .player-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
-        .card { 
-            background: var(--card-bg); width: 280px; height: 440px; 
-            border-radius: 12px; position: relative; overflow: hidden; 
-            color: #111; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid #ddd;
-            text-align: left;
-        }
-        .player-img-container { position: absolute; top: 0; left: 0; width: 100%; height: 75%; overflow: hidden; z-index: 2; }
-        .player-img-container img { width: 100%; height: 100%; object-fit: cover; mask-image: linear-gradient(to bottom, black 85%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
-        .card-bg-shape { position: absolute; bottom: 0; right: 0; width: 70%; height: 40%; background: #f9f9f9; clip-path: polygon(100% 0, 0% 100%, 100% 100%); z-index: 1; }
-        .card-info-main { position: absolute; bottom: 70px; left: 20px; right: 20px; z-index: 6; }
-        .p-name { font-size: 28px; font-weight: 900; text-transform: uppercase; line-height: 1; margin-bottom: 4px; color: #000; }
-        .p-position { font-size: 13px; font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-        .card-bottom-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 65px; background: #f4f4f4; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 6; }
-        .club-logo-mini { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #ddd; }
-        .p-number-box { width: 45px; height: 45px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; border: 2px solid #ccc; color: #000; }
-
-        /* ম্যাচ কার্ড */
-        .match-card-wrapper { margin-bottom: 25px; }
-        .match-card { background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%); margin: 0 auto; width: 100%; max-width: 550px; display: flex; align-items: center; justify-content: space-between; padding: 15px; border-radius: 10px 10px 0 0; }
-        .team { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .team img { width: 40px; height: 40px; border-radius: 50%; }
-        .vs-box { background: #fff; color: #ff5722; font-weight: 900; padding: 5px 12px; border-radius: 5px; }
-        .match-meta { background: rgba(20, 20, 20, 0.9); padding: 10px; font-size: 13px; width: 100%; max-width: 550px; margin: 0 auto; border-radius: 0 0 10px 10px; border-bottom: 3px solid var(--accent); }
-
-        /* গ্যালারি ও ইনফো */
-        .info-box { max-width: 800px; margin: auto; background: rgba(0,0,0,0.7); padding: 30px; border-radius: 15px; border: 1px solid var(--primary); text-align: left; line-height: 1.8; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-        .gallery-grid img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid var(--primary); }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* প্লেয়ার কার্ড ডিজাইন - নাম্বার ট্যাগ নিচে */
+        .player-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; padding: 40px 15px; }
         
+        .card { 
+            background: #fff; width: 280px; height: 440px; 
+            border-radius: 20px; position: relative; overflow: hidden; 
+            color: #111; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: 0.4s ease;
+        }
+        .card:hover { transform: translateY(-15px); }
+
+        /* প্লেয়ার ইমেজ */
+        .card img.player-photo { 
+            width: 100%; height: 75%; object-fit: cover; 
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        /* কার্ডের তথ্য */
+        .p-body { padding: 0 20px; position: absolute; bottom: 85px; width: 100%; }
+        .p-body h2 { font-size: 28px; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1; color: #000; }
+        .p-body p { color: var(--primary); font-weight: bold; margin: 5px 0; font-size: 14px; text-transform: uppercase; }
+
+        /* কার্ড ফুটার - যেখানে নাম্বার ট্যাগ থাকবে */
+        .card-footer { 
+            position: absolute; bottom: 0; width: 100%; height: 75px; 
+            background: #fff; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; box-sizing: border-box; border-top: 1px solid #eee; 
+        }
+        .footer-logo { display: flex; align-items: center; gap: 8px; }
+        .footer-logo img { width: 35px; height: 35px; border-radius: 50%; }
+        .club-tag { font-size: 11px; font-weight: 900; color: #555; line-height: 1.1; }
+
+        /* নাম্বার বক্স - ডানে নিচে */
+        .p-number-box { 
+            width: 50px; height: 50px; background: #000; color: #fff; 
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
+            font-size: 24px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .section { display: none; min-height: 500px; padding: 20px 0; }
+        .section.active { display: block; animation: slideIn 0.5s; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
         @media (max-width: 600px) {
-            .header { gap: 10px; padding: 30px 10px; }
-            .main-logo { width: 55px; height: 55px; }
-            .header h1 { font-size: 1.5rem; }
+            .card { width: 46%; height: 320px; border-radius: 15px; }
+            .p-body { bottom: 65px; padding: 0 10px; }
+            .p-body h2 { font-size: 18px; }
+            .card-footer { height: 60px; padding: 0 10px; }
+            .footer-logo img { width: 25px; height: 25px; }
+            .club-tag { font-size: 8px; }
+            .p-number-box { width: 35px; height: 35px; font-size: 16px; border-radius: 8px; }
         }
     </style>
 </head>
 <body>
+
+<div class="main-wrapper">
     <div class="header">
         <img src="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg" class="main-logo" alt="Logo">
         <h1>ANIRBAN CLUB</h1>
     </div>
 
-    <div class="menu-grid">
-        <button class="menu-btn active" onclick="showSection('match-sec', this)">MATCHES</button>
-        <button class="menu-btn" onclick="showSection('squad-sec', this)">SQUAD</button>
-        <button class="menu-btn" onclick="showSection('gallery-sec', this)">GALLERY</button>
-        <button class="menu-btn" onclick="showSection('info-sec', this)">ABOUT</button>
+    <div class="menu-bar">
+        <button class="menu-btn active" onclick="showTab('match-sec', this)">MATCHES</button>
+        <button class="menu-btn" onclick="showTab('squad-sec', this)">SQUAD</button>
+        <button class="menu-btn" onclick="showTab('gallery-sec', this)">GALLERY</button>
+        <button class="menu-btn" onclick="showTab('info-sec', this)">ABOUT</button>
     </div>
 
-    <div id="match-sec" class="content-section active"><div id="match-list"></div></div>
-    <div id="squad-sec" class="content-section"><div id="player-list" class="player-grid"></div></div>
-    <div id="gallery-sec" class="content-section"><div id="gallery-list" class="gallery-grid"></div></div>
-    <div id="info-sec" class="content-section"><div class="info-box"><h2 style="color:var(--primary); margin-top:0;">আমাদের ক্লাব সম্পর্কে</h2><p id="club-desc" style="white-space: pre-wrap;">তথ্য লোড হচ্ছে...</p></div></div>
+    <div id="match-sec" class="section active"><div id="match-list"></div></div>
+    
+    <div id="squad-sec" class="section">
+        <div id="player-list" class="player-grid"></div>
+    </div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC_qcXBjhL5f4LQ7WVeSWHePpEzgEQpHPQ",
-            authDomain: "anirban-club-8277f.firebaseapp.com",
-            databaseURL: "https://anirban-club-8277f-default-rtdb.firebaseio.com",
-            projectId: "anirban-club-8277f",
-            storageBucket: "anirban-club-8277f.firebasestorage.app",
-            messagingSenderId: "844771629661",
-            appId: "1:844771629661:web:84b955dd93724060b4cbb4"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+    <div id="gallery-sec" class="section"><div id="gallery-list" class="player-grid"></div></div>
+    
+    <div id="info-sec" class="section">
+        <div style="max-width:800px; margin:auto; background:rgba(0,0,0,0.8); padding:40px; border-radius:20px; border:1px solid var(--primary);">
+            <p id="club-desc" style="line-height:1.8; color:#eee;"></p>
+        </div>
+    </div>
+</div>
 
-        function showSection(id, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
-        }
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC_qcXBjhL5f4LQ7WVeSWHePpEzgEQpHPQ",
+        authDomain: "anirban-club-8277f.firebaseapp.com",
+        databaseURL: "https://anirban-club-8277f-default-rtdb.firebaseio.com",
+        projectId: "anirban-club-8277f",
+        storageBucket: "anirban-club-8277f.firebasestorage.app",
+        appId: "1:844771629661:web:84b955dd93724060b4cbb4"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-        db.ref('matchData').on('value', s => {
-            const div = document.getElementById('match-list'); div.innerHTML = '';
-            s.forEach(c => {
-                const m = c.val();
-                div.innerHTML += `<div class="match-card-wrapper"><div class="match-card"><div class="team"><img src="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg"><span>ANIRBAN</span></div><div class="vs-box">VS</div><div class="team"><span>${m.opponent}</span><img src="https://cdn-icons-png.flaticon.com/512/53/53254.png"></div></div><div class="match-meta">${m.date} — ${m.time} — ANIRBAN ARENA</div></div>`;
-            });
+    function showTab(id, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    db.ref('players').on('value', s => {
+        const div = document.getElementById('player-list'); div.innerHTML = '';
+        s.forEach(c => {
+            const p = c.val();
+            div.innerHTML += `
+            <div class="card">
+                <img src="${p.photo}" class="player-photo" loading="lazy">
+                <div class="p-body">
+                    <h2>${p.name}</h2>
+                    <p>${p.position}</p>
+                </div>
+                <div class="card-footer">
+                    <div class="footer-logo">
+                        <img src="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg">
+                        <div class="club-tag">ANIRBAN<br>FOOTBALL CLUB</div>
+                    </div>
+                    <div class="p-number-box">${p.number}</div>
+                </div>
+            </div>`;
         });
+    });
 
-        db.ref('players').on('value', s => {
-            const div = document.getElementById('player-list'); div.innerHTML = '';
-            s.forEach(c => {
-                const p = c.val();
-                div.innerHTML += `
-                    <div class="card">
-                        <div class="player-img-container"><img src="${p.photo}"></div>
-                        <div class="card-bg-shape"></div>
-                        <div class="card-info-main">
-                            <div class="p-name">${p.name}</div>
-                            <div class="p-position">${p.position}</div>
-                        </div>
-                        <div class="card-bottom-bar">
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <img src="https://i.ibb.co.com/B5mdnXJK/1000019867.jpg" class="club-logo-mini">
-                                <div style="font-size:10px; font-weight:900; color:#555;">ANIRBAN<br>CLUB</div>
-                            </div>
-                            <div class="p-number-box">${p.number}</div>
-                        </div>
-                    </div>`;
-            });
-        });
+    db.ref('clubInfo').on('value', s => { document.getElementById('club-desc').innerText = s.val(); });
+</script>
 
-        db.ref('gallery').on('value', s => {
-            const div = document.getElementById('gallery-list'); div.innerHTML = '';
-            s.forEach(c => { div.innerHTML += `<img src="${c.val().url}">`; });
-        });
-
-        db.ref('clubInfo').on('value', s => {
-            document.getElementById('club-desc').innerText = s.val() || "তথ্য শীঘ্রই আসছে।";
-        });
-    </script>
 </body>
 </html>
